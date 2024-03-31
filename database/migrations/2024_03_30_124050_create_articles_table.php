@@ -13,7 +13,19 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('user_id');
+            $table->string('title');
+            $table->text('body');
+            $table->string('image')->nullable();
+            $table->boolean('status')->default(1); // 1 - akttif / 0 - pasif
+            $table->integer('like_count')->default(0);
+            $table->integer('reading_time'); //kelime sayısına göre hesaplanacak
+            $table->dateTime('publish_date')->nullable();
             $table->timestamps();
+
+            $table->foreign('category_id')->on('categories')->references('id')->onDelete('cascade');
+            $table->foreign('user_id')->on('users')->references('id');
         });
     }
 

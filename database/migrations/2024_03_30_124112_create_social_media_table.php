@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('social_media', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->tinyInteger('order')->default(0);
+            $table->string('name');
+            $table->string('icon');
+            $table->string('link');
             $table->timestamps();
+
+            $table->foreign('user_id')->on('users')->references('id');
         });
     }
 
