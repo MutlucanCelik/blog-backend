@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Category;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +19,7 @@ class CategoryController extends Controller
             }
 
         }catch(\Exception $e) {
-            return response()->json(['errors' => $e->getMessage()],400);
+            return response()->json(['errors' => $e->getMessage()],500);
         }
     }
 
@@ -35,7 +33,7 @@ class CategoryController extends Controller
                 return  response()->json(['error' => 'Category not found'],404);
             }
         }catch (\Exception $e){
-            return response()->json(['errors' => $e->getMessage()],400);
+            return response()->json(['errors' => $e->getMessage()],500);
         }
     }
 

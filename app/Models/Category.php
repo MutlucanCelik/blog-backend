@@ -9,9 +9,8 @@ class Category extends Model
 {
     use HasFactory;
 
-
     protected $fillable = ['parent_id','order','name','image','status','show_home_page_status'];
-
+    protected $guarded = ['id'];
     public function getArticles(){
         return $this->hasMany(Article::class);
     }
