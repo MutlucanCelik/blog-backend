@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
@@ -37,11 +38,15 @@ class ArticleController extends Controller
                 'user_id' => $request->user_id,
                 'title' => $request->title,
                 'body' => $request->body,
-                'image' => $request->image,
                 'status' => isset($request->status) ? 1 : 0,
                 'reading_time' => ceil($wordCount / $averageReadingSpeed), //dakikada 200 kelime dedik
                 'publish_date' => $request->publish_date
             ];
+
+            if($request->hasFile('image')){
+                $file = $request->file('image');
+                $data['image'] = Storage::url($file->store('public/article'));
+            }
 
             Article::create($data);
 
@@ -78,10 +83,14 @@ class ArticleController extends Controller
             $article->category_id = $request->category_id;
             $article->title = $request->title;
             $article->body = $request->body;
-            $article->image = $request->image;
             $article->status = isset($request->status) ? 1 : 0;
             $article->reading_time =  ceil($wordCount / $averageReadingSpeed);
             $article->publish_date = $request->publish_date;
+
+            if($request->hasFile('image')){
+                $file = $request->file('image');
+                $article->image = Storage::url($file->store('public/article'));
+            }
             $article->save();
 
             return response()->json(['article'=> $article],200);
@@ -92,8 +101,9 @@ class ArticleController extends Controller
     }
 
     public function delete(Request $request){
+        $article = Article::where('id',$request->id)->first();
+
         try {
-            $article = Article::where('id',$request->id)->first();
             if($article){
                 $article->delete();
                 return response()->json(['success' => 'Article deleted'],204);

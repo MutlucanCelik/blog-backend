@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
@@ -58,10 +59,14 @@ class CategoryController extends Controller
             $data = [
                 'parent_id' => $request->parent_id ?? null,
                 'name' => $request->name,
-                'image' => $request->image,
                 'order' => isset($request->order) ? 1 : 0,
                 'show_home_page_status' => isset($request->show_home_page_status) ? 1 : 0,
             ];
+
+            if($request->hasFile('image')){
+                $file = $request->file('image');
+                $data['image'] = Storage::url($file->store('public/category'));
+            }
 
             Category::create($data);
 
@@ -92,10 +97,14 @@ class CategoryController extends Controller
         try {
             $category->parent_id = $request->parent_id;
             $category->order = $request->order ?? 0;
-            $category->name = $request->name;
             $category->image = $request->image;
             $category->status = isset($request->status) ? 1 : 0;
             $category->show_home_page_status = isset($request->show_home_page_status) ? 1 : 0;
+
+            if($request->hasFile('image')){
+                $file = $request->file('image');
+                $category->image = Storage::url($file->store('public/category'));
+            }
             $category->save();
 
             return response()->json(['category'=> $category],200);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -37,43 +38,6 @@ class UserController extends Controller
         }
     }
 
-    public function create(Request $request){
-
-        try {
-            $validator = Validator::make($request->all(),[
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|min:6|regex:/^.*(?=.{7,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
-            ],[
-                'email.email' => 'Email formatında bir değer giriniz',
-                'email.required' => 'Email alanı zorunludur.',
-                'email.unique' => 'Bu email zaten kullanılmaktadır',
-                'first_name.required' => 'Ad alanı zorunludur.',
-                'last_name.required' => 'Soyad alanı zorunludur.',
-                'password.required' => 'Şifre alanı zorunludur.',
-                'password.min' => 'Şifre alanı en az 8 karaktererden oluşmaldıır',
-                'password.regex' => 'Şifreniz bir büyük ve bir küçük harf içermelidir'
-            ]);
-
-            if($validator->fails()){
-                return response()->json(['errors' => $validator->errors()],400);
-            }
-
-            $data = [
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password)
-            ];
-
-            User::create($data);
-            return response()->json(['success' => 'user created'], 201);
-
-        }catch (\Exception $e){
-            return response()->json(['errors' => $e->getMessage()],500);
-        }
-    }
 
     public function update(Request $request){
         $user = User::where('id',$request->user_id)->first();
@@ -103,7 +67,11 @@ class UserController extends Controller
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
             $user->email = $request->email;
-            $user->image = $request->image;
+
+            if($request->hasFile('image')){
+                $file = $request->file('image');
+                $user->image = Storage::url($file->store('public/users'));
+            }
             $user->save();
 
             return response()->json(['user' => $user], 200);

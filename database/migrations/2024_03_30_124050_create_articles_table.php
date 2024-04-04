@@ -19,7 +19,6 @@ return new class extends Migration
             $table->text('body');
             $table->string('image')->nullable();
             $table->boolean('status')->default(1); // 1 - akttif / 0 - pasif
-            $table->integer('like_count')->default(0);
             $table->integer('reading_time'); //kelime sayısına göre hesaplanacak
             $table->dateTime('publish_date')->nullable();
             $table->timestamps();
