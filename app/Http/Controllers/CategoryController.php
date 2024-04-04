@@ -26,7 +26,9 @@ class CategoryController extends Controller
 
     public function getAllArticlesByCategory(Request $request){
         try {
-            $category = Category::with('getArticles')->where('id',$request->id)->first();
+            $category = Category::with(['getArticles' => function($query){
+                $query->withCount('articleLikes');
+            }])->where('id',$request->id)->first();
 
             if($category){
                 return response()->json(['category' => $category],200);

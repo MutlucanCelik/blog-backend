@@ -118,7 +118,14 @@ class ArticleController extends Controller
 
     public function getByDetail(Request $request){
         try {
-            $article = Article::where('id',$request->id)->first();
+            $article = Article::withCount('articleLikes')
+                ->with(['getComments' => function($query){
+                    $query->withCount('commentLikes')
+                        ->with('user');
+                }])
+                ->where('id', $request->id)
+                ->first();
+
             if($article){
                 return  response()->json(['article' => $article],200);
             }else{

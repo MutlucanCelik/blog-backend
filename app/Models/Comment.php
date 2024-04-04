@@ -12,9 +12,14 @@ class Comment extends Model
 
     protected $guarded = [];
 
-    public function parentComment()
+    public function commentLikes()
     {
-        return $this->belongsTo(Comment::class, 'parent_id');
+        return $this->hasMany(UserLikeComment::class,'comment_id','id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class,'user_id','id');
     }
 
 

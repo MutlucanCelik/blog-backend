@@ -7,6 +7,8 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserLikeArticleController;
+use App\Http\Controllers\UserLikesController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -67,3 +69,6 @@ Route::prefix('/auth')->group(function () {
     Route::post('/register',[AuthController::class,'register']);
     Route::post('/login',[AuthController::class,'login']);
 });
+
+Route::post('/article-like-status',[UserLikesController::class,'articleLikeStatus']);
+Route::post('/comment-like-status',[UserLikesController::class,'commentLikeStatus']);

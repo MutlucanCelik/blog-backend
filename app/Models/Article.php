@@ -9,9 +9,17 @@ class Article extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id','created_at','updated_at'];
+    protected $guarded = [];
 
-  /*  public function getArticleLikeCount(){
-        $this->belongsTo(Article::class);
-    }*/
+    public function articleLikes()
+    {
+        return $this->hasMany(UserLikeArticle::class,'article_id','id');
+    }
+
+    public function getComments()
+    {
+        return $this->hasMany(Comment::class,'article_id','id');
+    }
+
+
 }
